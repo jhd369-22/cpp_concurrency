@@ -66,7 +66,7 @@ namespace ra::concurrency {
                 std::unique_lock<std::mutex> lock(mutex_);
 
                 // Wait until the queue is not full or the queue is closed.
-                condition_.wait(lock, [this]() { return !is_full() || closed_; });
+                condition_push_.wait(lock, [this]() { return !is_full() || closed_; });
 
                 // If the queue is closed, return with status::closed.
                 if (closed_) {
@@ -77,7 +77,7 @@ namespace ra::concurrency {
                 queue_.push(std::move(x));
 
                 // Notify any threads waiting for the queue to be not full.
-                condition_.notify_one();
+                condition_pop_.notify_one();
 
                 return status::success;
             }
@@ -100,7 +100,7 @@ namespace ra::concurrency {
                 std::unique_lock<std::mutex> lock(mutex_);
 
                 // Wait until the queue is not empty or the queue is closed.
-                condition_.wait(lock, [this]() { return !is_empty() || closed_; });
+                condition_pop_.wait(lock, [this]() { return !is_empty() || closed_; });
 
                 // If the queue is empty and closed, or the queue is empty, return with status::closed.
                 if ((is_empty() && closed_) || is_empty()) {
@@ -112,7 +112,7 @@ namespace ra::concurrency {
                 queue_.pop();
 
                 // Notify any threads waiting for the queue to be not empty.
-                condition_.notify_one();
+                condition_push_.notify_one();
 
                 return status::success;
             }
@@ -127,7 +127,8 @@ namespace ra::concurrency {
             void close() {
                 std::unique_lock<std::mutex> lock(mutex_);
                 closed_ = true;
-                condition_.notify_all();
+                condition_push_.notify_all();
+                condition_pop_.notify_all();
             }
 
             // Clears the queue.
@@ -171,6 +172,9 @@ namespace ra::concurrency {
             // The maximum number of elements that can be held in the queue.
             size_type max_size_;
 
+            // The queue of elements.
+            std::queue<value_type> queue_;
+            
             // The flag used to indicate whether the queue is closed.
             bool closed_;
 
@@ -179,10 +183,8 @@ namespace ra::concurrency {
 
             // The condition variable used to block threads when the queue is
             // full or empty.
-            mutable std::condition_variable condition_;
-
-            // The queue of elements.
-            std::queue<value_type> queue_;
+            mutable std::condition_variable condition_push_;
+            mutable std::condition_variable condition_pop_;
     };
 
 }  // namespace ra::concurrency
