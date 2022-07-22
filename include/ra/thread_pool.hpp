@@ -1,10 +1,13 @@
+#ifndef THREAD_POOL_HPP
+#define THREAD_POOL_HPP
+
 #include <condition_variable>
 #include <functional>
 #include <mutex>
 #include <ra/queue.hpp>
 #include <thread>
 
-#define MAX_QUEUE 32  // Maximum number of elements in the queue, at least 32.
+#define MAX_QUEUE 36  // Maximum number of elements in the queue, at least 32.
 
 namespace ra::concurrency {
 
@@ -99,3 +102,5 @@ namespace ra::concurrency {
             bool shutdown_;
     };
 }  // namespace ra::concurrency
+
+#endif  // THREAD_POOL_HPP
