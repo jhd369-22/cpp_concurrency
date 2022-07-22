@@ -1,3 +1,11 @@
+#include <condition_variable>
+#include <functional>
+#include <mutex>
+#include <ra/queue.hpp>
+#include <thread>
+
+#define MAX_QUEUE 32  // Maximum number of elements in the queue, at least 32.
+
 namespace ra::concurrency {
 
     // Thread pool class.
@@ -61,5 +69,33 @@ namespace ra::concurrency {
             // Tests if the thread pool has been shutdown.
             // This function is not thread safe.
             bool is_shutdown() const;
+
+        private:
+            // Size of the thread pool.
+            size_type num_threads_;
+
+            // Number of threads are idle.
+            size_type idle_threads_;
+
+            // A queue of tasks.
+            queue<std::function<void()>> tasks_;
+
+            // A mutex used to protect the queue of tasks.
+            mutable std::mutex mutex_;
+
+            // A condition variable used to signal idle threads.
+            mutable std::condition_variable condition_pop_;
+
+            // A condition variable used to signal tasks to be scheduled.
+            mutable std::condition_variable condition_push_;
+
+            // A condition variable used to signal shutdown of the thread pool.
+            mutable std::condition_variable condition_shutdown_;
+
+            // A vector of threads.
+            std::vector<std::thread> threads_;
+
+            // A flag indicating whether the thread pool has been shutdown.
+            bool shutdown_;
     };
 }  // namespace ra::concurrency

@@ -19,12 +19,15 @@ include(Sanitizers.cmake)
 # include directory
 include_directories(include)
 
+# add library
+add_library(test_thread_pool lib/thread_pool.cpp)
+
 # add executable
 add_executable(test_queue app/test_queue.cpp)
 target_link_libraries(test_queue Catch2::Catch2)
 
-add_executable(test_thread_pool app/test_thread_pool.cpp lib/thread_pool.cpp)
-target_link_libraries(test_thread_pool Catch2::Catch2)
+add_executable(test_thread_pool app/test_thread_pool.cpp)
+target_link_libraries(test_thread_pool test_thread_pool Catch2::Catch2)
 
 add_executable(test_julia_set app/test_julia_set.cpp)
 target_link_libraries(test_julia_set Catch2::Catch2)
