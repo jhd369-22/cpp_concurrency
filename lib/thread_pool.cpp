@@ -14,6 +14,7 @@ namespace ra::concurrency {
 
                         ++idle_threads_;
 
+                        // To notify the shutdown function that the idle thread count has increased.
                         if (tasks_.is_closed()) {
                             condition_shutdown_.notify_one();
                         }
@@ -47,6 +48,7 @@ namespace ra::concurrency {
 
                         ++idle_threads_;
 
+                        // To notify the shutdown function that the idle thread count has increased.
                         if (tasks_.is_closed()) {
                             condition_shutdown_.notify_one();
                         }
@@ -111,6 +113,7 @@ namespace ra::concurrency {
         condition_shutdown_.wait(lock, [this]() { return tasks_.is_empty() && (idle_threads_ == num_threads_); });
         shutdown_ = true;
 
+        // Notify all threads that the thread pool is shutting down, so that they can exit.
         condition_push_.notify_all();
         condition_pop_.notify_all();
     }

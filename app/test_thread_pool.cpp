@@ -1,6 +1,8 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include <ra/thread_pool.hpp>
+// #include <thread> // already included in thread_pool.hpp
+// #include <vector> // already included in thread_pool.hpp
 
 TEST_CASE("counter increment", "[thread_pool]") {
     namespace rc = ra::concurrency;
