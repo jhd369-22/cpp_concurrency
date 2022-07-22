@@ -3,6 +3,7 @@
 #include <ra/queue.hpp>
 #include <thread>
 #include <vector>
+#include <cassert>
 
 TEMPLATE_TEST_CASE("single thread basic functionality", "[ra::concurrency::queue]", int, double) {
     namespace ra = ra::concurrency;
@@ -66,13 +67,13 @@ TEMPLATE_TEST_CASE("multi thread basic functionality", "[ra::concurrency::queue]
             threads.push_back(std::thread([&q]() {
                 for (int j = 0; j < 10; ++j) {
                     typename queue_type::value_type x;
-                    CHECK(q.pop(x) == queue_type::status::success);
+                    assert((q.pop(x) == queue_type::status::success));
                 }
             }));
 
             threads.push_back(std::thread([&q, i]() {
                 for (int j = 0; j < 10; ++j) {
-                    CHECK(q.push(TestType(j + i * 10)) == queue_type::status::success);
+                    assert((q.push(TestType(j + i * 10)) == queue_type::status::success));
                 }
             }));
         }
@@ -90,7 +91,7 @@ TEMPLATE_TEST_CASE("multi thread basic functionality", "[ra::concurrency::queue]
 
         std::thread t1([&q]() {
             for (int j = 0; j < 10; ++j) {
-                CHECK(q.push(TestType(j)) == queue_type::status::success);
+                assert((q.push(TestType(j)) == queue_type::status::success));
             }
         });
 
@@ -98,7 +99,7 @@ TEMPLATE_TEST_CASE("multi thread basic functionality", "[ra::concurrency::queue]
 
         std::thread t2([&q]() {
             for (int j = 0; j < 10; ++j) {
-                CHECK(q.push(TestType(j)) == queue_type::status::closed);
+                assert((q.push(TestType(j)) == queue_type::status::closed));
             }
         });
 
@@ -115,7 +116,7 @@ TEMPLATE_TEST_CASE("multi thread basic functionality", "[ra::concurrency::queue]
     SECTION("pop with close") {
         std::thread t1([&q]() {
             for (int j = 0; j < 10; ++j) {
-                CHECK(q.push(TestType(j)) == queue_type::status::success);
+                assert((q.push(TestType(j)) == queue_type::status::success));
             }
         });
 
@@ -126,7 +127,7 @@ TEMPLATE_TEST_CASE("multi thread basic functionality", "[ra::concurrency::queue]
         std::thread t2([&q]() {
             for (int j = 0; j < 10; ++j) {
                 typename queue_type::value_type x;
-                CHECK(q.pop(x) == queue_type::status::success);
+                assert((q.pop(x) == queue_type::status::success));
             }
         });
 
