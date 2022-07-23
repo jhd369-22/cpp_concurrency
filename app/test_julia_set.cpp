@@ -34,8 +34,11 @@ void test(){
     std::complex<T> c(0.37, -0.16);
 
     // print the type of T
-    std::cout << "Data type: " << type_name<decltype(T(1))>() << '\n';
-    
+    std::cout << "Data type: " << type_name<decltype(T(1))>() << "\n";
+    std::cout << "Height: " << height << "\n";
+    std::cout << "Width: " << width << "\n";
+    std::cout << "Max iterations: " << max_iters << "\n";
+
     // 1 thread
     boost::multi_array<int, 2> a(boost::extents[height][width]);
     
@@ -75,7 +78,7 @@ void test(){
     end = std::chrono::steady_clock::now();
 
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "number of threads: 8, time: " << duration.count() << " ms" << "\n";
+    std::cout << "number of threads: 8, time: " << duration.count() << " ms" << "\n\n";
 }
 
 int main(){
