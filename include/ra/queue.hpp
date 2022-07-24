@@ -76,7 +76,7 @@ namespace ra::concurrency {
                 // Insert the value x at the end of the queue.
                 queue_.push(std::move(x));
 
-                // Notify any threads waiting for the queue to be not full.
+                // Notify any threads waiting for the queue to be not empty.
                 condition_pop_.notify_one();
 
                 return status::success;
@@ -111,7 +111,7 @@ namespace ra::concurrency {
                 x = std::move(queue_.front());
                 queue_.pop();
 
-                // Notify any threads waiting for the queue to be not empty.
+                // Notify any threads waiting for the queue to be not full.
                 condition_push_.notify_one();
 
                 return status::success;

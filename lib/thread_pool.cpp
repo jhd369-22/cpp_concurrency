@@ -110,6 +110,8 @@ namespace ra::concurrency {
         }
 
         tasks_.close();
+
+        // Wait until the tasks queue is empty and all the threads are idle.
         condition_shutdown_.wait(lock, [this]() { return tasks_.is_empty() && (idle_threads_ == num_threads_); });
         shutdown_ = true;
 

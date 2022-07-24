@@ -83,7 +83,13 @@ namespace ra::concurrency {
             // A queue of tasks.
             queue<std::function<void()>> tasks_;
 
-            // A mutex used to protect the queue of tasks.
+            // A vector of threads.
+            std::vector<std::thread> threads_;
+
+            // A flag indicating whether the thread pool has been shutdown.
+            bool shutdown_;
+
+            // A mutex used to protect critical sections.
             mutable std::mutex mutex_;
 
             // A condition variable used to signal idle threads.
@@ -94,12 +100,6 @@ namespace ra::concurrency {
 
             // A condition variable used to signal shutdown of the thread pool.
             mutable std::condition_variable condition_shutdown_;
-
-            // A vector of threads.
-            std::vector<std::thread> threads_;
-
-            // A flag indicating whether the thread pool has been shutdown.
-            bool shutdown_;
     };
 }  // namespace ra::concurrency
 
