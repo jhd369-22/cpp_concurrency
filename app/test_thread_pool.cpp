@@ -9,11 +9,13 @@ TEST_CASE("counter increment", "[thread_pool]") {
     rc::thread_pool::size_type counter = 0;
     rc::thread_pool pool(10);
     std::vector<std::thread> threads;
+    std::mutex m;
 
     for (int i = 0; i < 10; ++i) {
-        threads.emplace_back(std::thread([&pool, &counter]() {
+        threads.emplace_back(std::thread([&]() {
             for (int i = 0; i < 1000; ++i) {
-                pool.schedule(std::function<void()>([&counter]() {
+                pool.schedule(std::function<void()>([&]() {
+                    std::scoped_lock<std::mutex> lock(m);
                     ++counter;
                 }));
             }
