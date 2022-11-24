@@ -1,7 +1,0 @@
-name "Junhong Deng"
-student_id "V00950893"
-email "jd296467319@uvic.ca"
-term "2022-05"
-course "SENG475"
-section "T01"
-assignment "cpp_concurrency"
